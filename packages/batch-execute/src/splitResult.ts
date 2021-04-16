@@ -27,6 +27,18 @@ export function splitResult(mergedResult: ExecutionResult, numResults: number): 
     });
   }
 
+  const extensions = mergedResult.extensions;
+  if (extensions) {
+    Object.keys(extensions).forEach(prefixedKey => {
+      const { index, originalKey } = parseKey(prefixedKey);
+      if (!splitResults[index].extensions) {
+        splitResults[index].extensions = { [originalKey]: extensions[prefixedKey] };
+      } else {
+        splitResults[index].extensions[originalKey] = extensions[prefixedKey];
+      }
+    });
+  }
+
   const errors = mergedResult.errors;
   if (errors) {
     const newErrors: Record<string, Array<GraphQLError>> = Object.create(null);
